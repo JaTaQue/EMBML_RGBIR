@@ -7,12 +7,16 @@ Every row of splits/<version>/assignment.csv goes to the split it names. --image
 kind of image: rgb or ir (RGBT-Tiny JPGs) or fusion (4-channel PNGs, R, G, B, IR).
 --datasets keeps only some datasets (default: all rows in the file).
 
-Writes <data>/rgbt-tiny/splits/<version>/<name>/{train,val,test}.txt, <name>.yaml and split_info.yaml, where
-name is the image kind, plus _<datasets> if --datasets is used. Lines are written relative
-to the list file, so the lists are the same on every computer; only the yaml has a full path.
-Ultralytics finds a label by swapping /images/ for /labels/ in the image path, so images
-and labels must sit under the same root (rgbt-tiny/yolo, rgbt-tiny/fusion, anti-uav/fusion).
-Anti-UAV (auav) only has fusion images (left out of rgb and ir); its kept frames are listed in anti-uav/fusion_all.txt.
+Writes <data>/rgbt-tiny/splits/<version>/<name>/{train,val,test}.txt, <name>.yaml and
+split_info.yaml, where name is the image kind, plus _<datasets> if --datasets is used. Lines
+are written relative to the list file, so the lists are the same on every computer; only the
+yaml has a full path. Ultralytics finds a label by swapping /images/ for /labels/ in the image
+path, so images and labels must sit under the same root (rgbt-tiny/yolo, rgbt-tiny/fusion,
+anti-uav/fusion). Anti-UAV (auav) only has fusion images (left out of rgb and ir); its kept
+frames are listed in anti-uav/fusion_all.txt.
+
+As a module: build(version, data, images, datasets=None) -> dict with the output folder, the
+yaml path, the split_info path and the frame counts.
 """
 
 import argparse
@@ -35,30 +39,29 @@ def git(*args):
         return "unknown"
 
 
-def main():
-    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("version")
-    p.add_argument("--data", required=True, help="folder with rgbt-tiny/ and anti-uav/")
-    p.add_argument("--images", choices=["rgb", "ir", "fusion"], required=True)
-    p.add_argument("--datasets", nargs="+", help="keep only these datasets (default: all in assignment.csv)")
-    a = p.parse_args()
-    data = Path(a.data).expanduser().resolve()
-    rows = list(csv.DictReader(open(ROOT / "splits" / a.version / "assignment.csv", encoding="utf-8-sig")))
-    if a.datasets:
-        rows = [r for r in rows if r["dataset"] in a.datasets]
-    if a.images != "fusion" and any(r["dataset"] == "auav" for r in rows):
+def read_assignment(version):
+    with open(ROOT / "splits" / version / "assignment.csv", encoding="utf-8-sig") as f:
+        return list(csv.DictReader(f))
+
+
+def build(version, data, images, datasets=None):
+    data = Path(data).expanduser().resolve()
+    rows = read_assignment(version)
+    if datasets:
+        rows = [r for r in rows if r["dataset"] in datasets]
+    if images != "fusion" and any(r["dataset"] == "auav" for r in rows):
         print("note: auav has only fusion images, so its rows are left out")
         rows = [r for r in rows if r["dataset"] != "auav"]
-    name = a.images + ("_" + "+".join(a.datasets) if a.datasets else "")
-    out = data / "rgbt-tiny" / "splits" / a.version / name
+    name = images + ("_" + "+".join(datasets) if datasets else "")
+    out = data / "rgbt-tiny" / "splits" / version / name
     out.mkdir(parents=True, exist_ok=True)
 
     tiny = data / "rgbt-tiny"
     lists = {"train": [], "val": [], "test": []}
     for r in rows:
         if r["dataset"] == "rgbt":
-            d = tiny / "yolo" / "images" / r["clip"] / MOD[a.images] if a.images != "fusion" else tiny / "fusion" / "images" / r["clip"]
-            lists[r["split"]] += sorted(d.glob("*.jpg" if a.images != "fusion" else "*.png"))
+            d = tiny / "yolo" / "images" / r["clip"] / MOD[images] if images != "fusion" else tiny / "fusion" / "images" / r["clip"]
+            lists[r["split"]] += sorted(d.glob("*.jpg" if images != "fusion" else "*.png"))
     videos = {r["clip"]: r["split"] for r in rows if r["dataset"] == "auav"}
     if videos:  # only the frames we kept (every 10th, RGB-IR error <= 10 px)
         for line in open(data / "anti-uav" / "fusion_all.txt"):
@@ -68,23 +71,37 @@ def main():
 
     for split, files in lists.items():
         (out / f"{split}.txt").write_text("\n".join("./" + os.path.relpath(f, out) for f in files) + "\n")
-    yaml = [f"# built by tools/build_lists.py from splits/{a.version}/assignment.csv, images {a.images}",
+    yaml = [f"# built by tools/build_lists.py from splits/{version}/assignment.csv, images {images}",
             f"path: {out}", "train: train.txt", "val: val.txt", "test: test.txt"]
-    if a.images == "fusion":
+    if images == "fusion":
         yaml.append("channels: 4")
     yaml += ["names:"] + [f"  {i}: {n}" for i, n in enumerate(NAMES)]
     (out / f"{name}.yaml").write_text("\n".join(yaml) + "\n")
+
     # a record of exactly what was built, to be copied into the run folder when training starts
-    sha = hashlib.sha256((ROOT / "splits" / a.version / "assignment.csv").read_bytes()).hexdigest()
+    sha = hashlib.sha256((ROOT / "splits" / version / "assignment.csv").read_bytes()).hexdigest()
     dirty = "yes" if git("status", "--porcelain", "splits", "tools") not in ("", "unknown") else "no"
-    info = [f"split: {a.version}", f"images: {a.images}",
-            f"datasets: {' '.join(a.datasets) if a.datasets else 'all in assignment.csv'}",
+    info = [f"split: {version}", f"images: {images}",
+            f"datasets: {' '.join(datasets) if datasets else 'all in assignment.csv'}",
             f"assignment_sha256: {sha}", f"code_commit: {git('rev-parse', 'HEAD')}",
             f"uncommitted_changes_in_splits_or_tools: {dirty}",
             f"built: {datetime.datetime.now().isoformat(timespec='seconds')}",
             "frames:"] + [f"  {k}: {len(v)}" for k, v in lists.items()]
     (out / "split_info.yaml").write_text("\n".join(info) + "\n")
-    print(f"{name} {a.version}: " + ", ".join(f"{k} {len(v)}" for k, v in lists.items()) + f" frames -> {out}")
+    return {"dir": out, "yaml": out / f"{name}.yaml", "info": out / "split_info.yaml",
+            "frames": {k: len(v) for k, v in lists.items()}}
+
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("version")
+    p.add_argument("--data", required=True, help="folder with rgbt-tiny/ and anti-uav/")
+    p.add_argument("--images", choices=["rgb", "ir", "fusion"], required=True)
+    p.add_argument("--datasets", nargs="+", help="keep only these datasets (default: all in assignment.csv)")
+    a = p.parse_args()
+    r = build(a.version, a.data, a.images, a.datasets)
+    print(f"{r['yaml'].stem} {a.version}: " + ", ".join(f"{k} {v}" for k, v in r["frames"].items())
+          + f" frames -> {r['dir']}")
 
 
 if __name__ == "__main__":

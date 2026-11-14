@@ -26,3 +26,10 @@ Each build also writes `split_info.yaml` next to the lists: split version, image
 ```
 cp <data>/rgbt-tiny/splits/v3/fusion/split_info.yaml runs/<run name>/
 ```
+
+Train in one command (checks the split, builds the lists, trains, and saves `split_info.yaml` and `run_info.yaml` in the run folder). Everything after the options is passed to Ultralytics as `key=value`:
+
+```
+python tools/train.py v3 --data <data> --images fusion --model weights/yolo26n_4ch.pt \
+    --name fusion_v3_s0 imgsz=640 epochs=30 batch=8 seed=0
+```
