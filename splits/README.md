@@ -20,3 +20,9 @@ Tools (in `tools/`):
 
 - `python tools/check_split.py v3 --data <data> --write` checks a version and writes `checks.txt`. It fails if a group or recording is in two splits.
 - `python tools/build_lists.py v3 --data <data> --images fusion` builds the image lists and the yaml file for training. `--images` is `rgb`, `ir` or `fusion`. Every row of `assignment.csv` goes to its split. `--datasets rgbt` leaves out Anti-UAV. The lists are built on each computer and are not stored in git.
+
+Each build also writes `split_info.yaml` next to the lists: split version, image kind, datasets, a hash of `assignment.csv`, the git commit of this repo and the frame counts. When you start a training, copy it into the run folder, so the model keeps a record of its data:
+
+```
+cp <data>/rgbt-tiny/splits/v3/fusion/split_info.yaml runs/<run name>/
+```
