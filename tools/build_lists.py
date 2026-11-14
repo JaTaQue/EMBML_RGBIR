@@ -5,7 +5,8 @@
     python tools/build_lists.py v3 --data ~/ias0360/data --images fusion
     python tools/build_lists.py v3 --data ~/ias0360/data --images fusion --datasets rgbt
 
-Every row of splits/<version>/assignment.csv goes to the split it names. --images is the
+The split is checked first (tools/check_split.py) and the build stops if it has a leak. Every row
+of splits/<version>/assignment.csv goes to the split it names. --images is the
 kind of image: rgb or ir (RGBT-Tiny JPGs) or fusion (4-channel PNGs, R, G, B, IR).
 --datasets keeps only some datasets (default: all rows in the file).
 
@@ -28,6 +29,8 @@ import hashlib
 import os
 import subprocess
 from pathlib import Path
+
+import check_split
 
 ROOT = Path(__file__).resolve().parents[1]
 NAMES = ["ship", "car", "cyclist", "pedestrian", "bus", "drone", "plane"]
@@ -57,6 +60,9 @@ def read_assignment(version):
 def build(version, data, images, datasets=None):
     data = data_dir(data)
     rows = read_assignment(version)
+    errors = check_split.check(rows)  # never build lists from a split with a leak
+    if errors:
+        raise SystemExit("split check failed:\n  " + "\n  ".join(errors))
     if datasets:
         rows = [r for r in rows if r["dataset"] in datasets]
     if images != "fusion" and any(r["dataset"] == "auav" for r in rows):
