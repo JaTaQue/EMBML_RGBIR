@@ -4,7 +4,7 @@ One folder per split version. A finished version is never changed; a new split i
 
 Each version has:
 
-- `assignment.csv`: one row per clip. Columns: `dataset` (rgbt or auav), `clip`, `group`, `split`, `n_frames`, `official_split`. This is the only real content.
+- `assignment.csv`: one row per clip. Columns: `dataset` (rgbt or auav), `clip`, `group`, `split`. This is the only real content. Facts about a clip (frames, official split, classes) are in the metadata tables, not here.
 - `config.yaml`: how the split was made (script, seed, rules) and which recipes (which datasets go into train).
 - `checks.txt`: frames, clips and boxes per split, and the checks (no group or recording in two splits).
 
