@@ -10,15 +10,6 @@ how:
   val_drone_recordings: [DJI_0159, DJI_0173, DJI_0177]
   test_drone_recordings: [DJI_0057, DJI_0143, DJI_0175]
 metadata: sessions only (no metadata version yet; metadata tables were made after v3)
-recipes:
-  fusion:          # RGBT-Tiny only
-    train: [rgbt train]
-    val: [rgbt val]
-    test: [rgbt test]
-  fusion_antiuav:  # extra drone data in train only
-    train: [rgbt train, auav all]
-    val: [rgbt val]
-    test: [rgbt test]
 auav: all 192 videos go to train (every 10th frame, kept if RGB-IR error <= 10 px), 17,396 frames
 known_issues:
   - sessions are our own grouping, some places may be split across sessions
