@@ -15,3 +15,8 @@ A group is the unit that is never cut. Clips of the same recording are always in
 Versions:
 
 - `v3`: our session split (seed 481), with Anti-UAV in train only.
+
+Tools (in `tools/`):
+
+- `python tools/check_split.py v3 --data <data> --write` checks a version and writes `checks.txt`. It fails if a group or recording is in two splits.
+- `python tools/build_lists.py v3 --data <data> --recipe fusion` builds the image lists and the yaml file for training. Recipes: `rgb`, `ir`, `fusion`, `fusion_antiuav`. The lists are built on each computer and are not stored in git.
