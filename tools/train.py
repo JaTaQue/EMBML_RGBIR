@@ -1,5 +1,6 @@
 """Train a YOLO model on a split version. One command: check, build lists, train, record.
 
+    export EMBML_DATA=~/ias0360/data       # once per computer, instead of --data
     python tools/train.py v3 --data ~/ias0360/data --images fusion \\
         --model weights/yolo26n_4ch.pt --name fusion_v3_s0 imgsz=640 epochs=30 batch=8 seed=0
     python tools/train.py v3 --data ~/ias0360/data --images fusion --datasets rgbt \\
@@ -70,7 +71,7 @@ def run_record(args, overrides, built):
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("version", help="split version, a folder in splits/ (v3, v4, ...)")
-    p.add_argument("--data", required=True, help="folder with rgbt-tiny/ and anti-uav/")
+    p.add_argument("--data", help="folder with rgbt-tiny/ and anti-uav/ (default: environment variable EMBML_DATA)")
     p.add_argument("--images", choices=["rgb", "ir", "fusion"], required=True)
     p.add_argument("--datasets", nargs="+", help="keep only these datasets (default: all in assignment.csv)")
     p.add_argument("--model", required=True, help="weights file, e.g. weights/yolo26n.pt")

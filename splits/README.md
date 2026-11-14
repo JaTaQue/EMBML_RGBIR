@@ -16,7 +16,7 @@ Versions:
 
 - `v3`: our session split (seed 481), with Anti-UAV in train only.
 
-Tools (in `tools/`):
+Tools (in `tools/`). Set the data folder once per computer with `export EMBML_DATA=<data>` (add it to `~/.bashrc`), then `--data` is not needed:
 
 - `python tools/check_split.py v3 --data <data> --write` checks a version and writes `checks.txt`. It fails if a group or recording is in two splits.
 - `python tools/build_lists.py v3 --data <data> --images fusion` builds the image lists and the yaml file for training. `--images` is `rgb`, `ir` or `fusion`. Every row of `assignment.csv` goes to its split. `--datasets rgbt` leaves out Anti-UAV. The lists are built on each computer and are not stored in git.

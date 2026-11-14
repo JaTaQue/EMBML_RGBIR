@@ -17,6 +17,7 @@ IR boxes per split and class. Run it after making a split and before every train
 
 import argparse
 import csv
+import os
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -82,7 +83,8 @@ def counts(rows, data):
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("version")
-    p.add_argument("--data", help="folder with rgbt-tiny/ and anti-uav/ (adds frame and box counts)")
+    p.add_argument("--data", default=os.environ.get("EMBML_DATA"),
+                   help="folder with rgbt-tiny/ and anti-uav/ (adds frame and box counts; default: environment variable EMBML_DATA)")
     p.add_argument("--write", action="store_true", help="write splits/<version>/checks.txt")
     a = p.parse_args()
     folder = ROOT / "splits" / a.version

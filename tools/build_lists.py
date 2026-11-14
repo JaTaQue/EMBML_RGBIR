@@ -1,5 +1,7 @@
 """Build YOLO image lists and a data yaml from a split version's assignment.csv.
 
+    export EMBML_DATA=~/ias0360/data       # once per computer, instead of --data
+    python tools/build_lists.py v3 --images fusion
     python tools/build_lists.py v3 --data ~/ias0360/data --images fusion
     python tools/build_lists.py v3 --data ~/ias0360/data --images fusion --datasets rgbt
 
@@ -39,13 +41,21 @@ def git(*args):
         return "unknown"
 
 
+def data_dir(arg):
+    """The data folder: the --data argument, else the EMBML_DATA environment variable."""
+    value = arg or os.environ.get("EMBML_DATA")
+    if not value:
+        raise SystemExit("no data folder: pass --data or set the environment variable EMBML_DATA")
+    return Path(value).expanduser().resolve()
+
+
 def read_assignment(version):
     with open(ROOT / "splits" / version / "assignment.csv", encoding="utf-8-sig") as f:
         return list(csv.DictReader(f))
 
 
 def build(version, data, images, datasets=None):
-    data = Path(data).expanduser().resolve()
+    data = data_dir(data)
     rows = read_assignment(version)
     if datasets:
         rows = [r for r in rows if r["dataset"] in datasets]
@@ -95,7 +105,7 @@ def build(version, data, images, datasets=None):
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("version")
-    p.add_argument("--data", required=True, help="folder with rgbt-tiny/ and anti-uav/")
+    p.add_argument("--data", help="folder with rgbt-tiny/ and anti-uav/ (default: environment variable EMBML_DATA)")
     p.add_argument("--images", choices=["rgb", "ir", "fusion"], required=True)
     p.add_argument("--datasets", nargs="+", help="keep only these datasets (default: all in assignment.csv)")
     a = p.parse_args()
