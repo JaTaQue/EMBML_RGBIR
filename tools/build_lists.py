@@ -8,14 +8,16 @@
 The split is checked first (tools/check_split.py) and the build stops if it has a leak. Every row
 of splits/<version>/assignment.csv goes to the split it names. --images is the
 kind of image: rgb or ir (RGBT-Tiny JPGs) or fusion (4-channel PNGs, R, G, B, IR).
---datasets keeps only some datasets (default: all rows in the file).
+--datasets keeps only some datasets (default: all rows in the file). --labels is the label version
+(default v0, the authors' labels; v1 and later come from tools/apply_fixes.py). RGBT-Tiny images and
+labels are read from yolo_<labels>/ and fusion_<labels>/ (see convert_rgbt.py).
 
-Writes <data>/rgbt-tiny/splits/<version>/<name>/{train,val,test}.txt, <name>.yaml and
+Writes <data>/rgbt-tiny/splits/<version>/labels_<labels>/<name>/{train,val,test}.txt, <name>.yaml and
 split_info.yaml, where name is the image kind, plus _<datasets> if --datasets is used. Lines
 are written relative to the list file, so the lists are the same on every computer; only the
 yaml has a full path. Ultralytics finds a label by swapping /images/ for /labels/ in the image
-path, so images and labels must sit under the same root (rgbt-tiny/yolo, rgbt-tiny/fusion,
-anti-uav/fusion). Anti-UAV (auav) only has fusion images (left out of rgb and ir); its kept
+path, so images and labels must sit under the same root (rgbt-tiny/yolo_<labels>,
+rgbt-tiny/fusion_<labels>, anti-uav/fusion). Anti-UAV (auav) only has fusion images (left out of rgb and ir); its kept
 frames are listed in anti-uav/fusion_all.txt.
 
 As a module: build(version, data, images, datasets=None) -> dict with the output folder, the
@@ -57,7 +59,7 @@ def read_assignment(version):
         return list(csv.DictReader(f))
 
 
-def build(version, data, images, datasets=None):
+def build(version, data, images, datasets=None, labels="v0"):
     data = data_dir(data)
     rows = read_assignment(version)
     errors = check_split.check(rows)  # never build lists from a split with a leak
@@ -69,14 +71,19 @@ def build(version, data, images, datasets=None):
         print("note: auav has only fusion images, so its rows are left out")
         rows = [r for r in rows if r["dataset"] != "auav"]
     name = images + ("_" + "+".join(datasets) if datasets else "")
-    out = data / "rgbt-tiny" / "splits" / version / name
+    out = data / "rgbt-tiny" / "splits" / version / f"labels_{labels}" / name
     out.mkdir(parents=True, exist_ok=True)
 
     tiny = data / "rgbt-tiny"
     lists = {"train": [], "val": [], "test": []}
+    for root in ("yolo" if images != "fusion" else "fusion",):
+        if any(r["dataset"] == "rgbt" for r in rows) and not (tiny / f"{root}_{labels}" / "labels").is_dir():
+            raise SystemExit(f"labels {labels} not found at {tiny / f'{root}_{labels}'}: run tools/convert_rgbt.py "
+                             f"(v0) or tools/apply_fixes.py {labels}")
     for r in rows:
         if r["dataset"] == "rgbt":
-            d = tiny / "yolo" / "images" / r["clip"] / MOD[images] if images != "fusion" else tiny / "fusion" / "images" / r["clip"]
+            d = (tiny / f"yolo_{labels}" / "images" / r["clip"] / MOD[images] if images != "fusion"
+                 else tiny / f"fusion_{labels}" / "images" / r["clip"])
             lists[r["split"]] += sorted(d.glob("*.jpg" if images != "fusion" else "*.png"))
     videos = {r["clip"]: r["split"] for r in rows if r["dataset"] == "auav"}
     if videos:  # only the frames we kept (every 10th, RGB-IR error <= 10 px)
@@ -97,7 +104,10 @@ def build(version, data, images, datasets=None):
     # a record of exactly what was built, to be copied into the run folder when training starts
     sha = hashlib.sha256((ROOT / "splits" / version / "assignment.csv").read_bytes()).hexdigest()
     dirty = "yes" if git("status", "--porcelain", "splits", "tools") not in ("", "unknown") else "no"
-    info = [f"split: {version}", f"images: {images}",
+    label_info = tiny / f"{'yolo' if images != 'fusion' else 'fusion'}_{labels}" / "labels_info.txt"
+    fixes_sha = next((l.split(":", 1)[1].strip() for l in label_info.read_text().splitlines()
+                      if l.startswith("fixes_sha256")), "none (authors' labels)") if label_info.exists() else "unknown"
+    info = [f"split: {version}", f"images: {images}", f"labels: {labels}", f"fixes_sha256: {fixes_sha}",
             f"datasets: {' '.join(datasets) if datasets else 'all in assignment.csv'}",
             f"assignment_sha256: {sha}", f"code_commit: {git('rev-parse', 'HEAD')}",
             f"uncommitted_changes_in_splits_or_tools: {dirty}",
@@ -114,8 +124,9 @@ def main():
     p.add_argument("--data", help="folder with rgbt-tiny/ and anti-uav/ (default: environment variable EMBML_DATA)")
     p.add_argument("--images", choices=["rgb", "ir", "fusion"], required=True)
     p.add_argument("--datasets", nargs="+", help="keep only these datasets (default: all in assignment.csv)")
+    p.add_argument("--labels", default="v0", help="label version: v0 = the authors' labels, v1 ... = with our fixes")
     a = p.parse_args()
-    r = build(a.version, a.data, a.images, a.datasets)
+    r = build(a.version, a.data, a.images, a.datasets, a.labels)
     print(f"{r['yaml'].stem} {a.version}: " + ", ".join(f"{k} {v}" for k, v in r["frames"].items())
           + f" frames -> {r['dir']}")
 
