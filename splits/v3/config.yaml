@@ -1,0 +1,26 @@
+# Split v3 (made 2026-11-06 in the course repo, written down here 2026-11-14)
+version: v3
+unit: group            # a group is never cut: all its clips go to one split
+groups: our sessions   # project/sessions.csv (34 sessions, from tools/find_sessions.py)
+rule: whole sessions to train, val or test; drone sessions fixed by hand
+how:
+  script: project/tools/coco_to_yolo.py (split_sessions, seed 481, fraction 0.15)
+  drone_sessions: chosen so train, val and test have similar IR contrast, size,
+    clutter, RGB contrast and night share (tools/split_stats.py, 19,683 options tried)
+  val_drone_recordings: [DJI_0159, DJI_0173, DJI_0177]
+  test_drone_recordings: [DJI_0057, DJI_0143, DJI_0175]
+metadata: sessions only (no metadata version yet; metadata tables were made after v3)
+recipes:
+  fusion:          # RGBT-Tiny only
+    train: [rgbt train]
+    val: [rgbt val]
+    test: [rgbt test]
+  fusion_antiuav:  # extra drone data in train only
+    train: [rgbt train, auav all]
+    val: [rgbt val]
+    test: [rgbt test]
+auav: all 192 videos go to train (every 10th frame, kept if RGB-IR error <= 10 px), 17,396 frames
+known_issues:
+  - sessions are our own grouping, some places may be split across sessions
+  - 5,081 of the 6,766 test frames are from clips that are official train (v3 is not the official split)
+  - sky-only drone clips look alike in any place

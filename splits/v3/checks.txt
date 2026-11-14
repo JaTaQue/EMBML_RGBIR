@@ -1,0 +1,7 @@
+rgbt train:  78 clips, 20 groups,  32634 frames, boxes (IR) {'ship': 56125, 'car': 176330, 'cyclist': 37660, 'pedestrian': 89181, 'bus': 12010, 'drone': 9512, 'plane': 17392}
+rgbt val  :  21 clips,  7 groups,   7301 frames, boxes (IR) {'ship': 4780, 'car': 64069, 'cyclist': 16043, 'pedestrian': 44705, 'bus': 4237, 'drone': 1060, 'plane': 1458}
+rgbt test :  16 clips,  7 groups,   6766 frames, boxes (IR) {'ship': 17531, 'car': 56866, 'cyclist': 15856, 'pedestrian': 17014, 'bus': 1288, 'drone': 2576, 'plane': 204}
+auav train: 192 videos, 17396 frames (every 10th, kept by error <= 10 px)
+groups in more than one split: 0 (must be 0)
+recordings in more than one split: 0 (must be 0)
+for reference: v3 test frames from clips that are official train: 5081
