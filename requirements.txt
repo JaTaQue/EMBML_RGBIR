@@ -1,0 +1,8 @@
+# Packages for tools/ (convert, fixes, split, train). Tested with Python 3.12.
+#   pip install -r requirements.txt
+# torch comes with ultralytics. For a GPU, install the torch build for your CUDA first
+# (https://pytorch.org/get-started/locally/); on the HPC use the cluster's setup.
+ultralytics==8.4.190   # pinned: tools/build_lists.py relies on how this version reads list files
+numpy>=2.5.4
+opencv-python>=5.0.0.93
+pyyaml>=6.0.3

@@ -35,6 +35,8 @@ for `labels` in the path. Nothing is moved into train, val or test folders: the 
 
 ## Quick start
 
+Install the packages first: `pip install -r requirements.txt` (Python 3.12).
+
 ```
 export EMBML_DATA=<your data folder>          # holds rgbt-tiny/ and anti-uav/
 python tools/convert_rgbt.py                  # authors' labels -> YOLO labels v0
