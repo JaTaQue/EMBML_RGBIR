@@ -52,7 +52,7 @@ python tools/train.py --data-yaml $EMBML_DATA/rgbt-tiny/splits/v3/labels_v1/fusi
 
 - A split version or a label version is never edited after use. A change makes a new version.
 - Compare models only when they used the same split version and the same label version.
-- `build_lists.py` stops if a group or recording is in two splits (`tools/check_split.py` does the same check).
+- `build_lists.py` stops if a group or recording is in two splits (`tools/check_split.py` does the same check), or if a picture has no label file.
 - Each run folder gets `run_info.yaml` and `split_info.yaml`, with the settings, versions and hashes.
 
 More details: `splits/README.md`, `annotations/README.md`, `tools/README.md`.

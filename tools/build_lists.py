@@ -5,7 +5,8 @@
     python tools/build_lists.py v3 --data ~/ias0360/data --images fusion
     python tools/build_lists.py v3 --data ~/ias0360/data --images fusion --datasets rgbt
 
-The split is checked first (tools/check_split.py) and the build stops if it has a leak. Every row
+The split is checked first (tools/check_split.py) and the build stops if it has a leak, or if a
+picture has no label file. Every row
 of splits/<version>/assignment.csv goes to the split it names. --images is the
 kind of image: rgb or ir (RGBT-Tiny JPGs) or fusion (4-channel PNGs, R, G, B, IR).
 --datasets keeps only some datasets (default: all rows in the file). --labels is the label version
@@ -54,6 +55,12 @@ def data_dir(arg):
     return Path(value).expanduser().resolve()
 
 
+def label_path(image):
+    """The label YOLO looks for: swap the last /images/ for /labels/ and the extension for .txt."""
+    sa, sb = f"{os.sep}images{os.sep}", f"{os.sep}labels{os.sep}"
+    return sb.join(str(image).rsplit(sa, 1)).rsplit(".", 1)[0] + ".txt"
+
+
 def read_assignment(version):
     with open(ROOT / "splits" / version / "assignment.csv", encoding="utf-8-sig") as f:
         return list(csv.DictReader(f))
@@ -92,6 +99,10 @@ def build(version, data, images, datasets=None, labels="v0"):
             if line.strip() and f.parts[-2] in videos:
                 lists[videos[f.parts[-2]]].append(f)
 
+    missing = [f for files in lists.values() for f in files if not os.path.exists(label_path(f))]
+    if missing:  # YOLO would treat a picture without a label file as having no objects
+        raise SystemExit(f"{len(missing)} pictures have no label file, for example:\n  "
+                         + "\n  ".join(label_path(f) for f in missing[:5]))
     for split, files in lists.items():
         (out / f"{split}.txt").write_text("\n".join("./" + os.path.relpath(f, out) for f in files) + "\n")
     yaml = [f"# built by tools/build_lists.py from splits/{version}/assignment.csv, images {images}",
