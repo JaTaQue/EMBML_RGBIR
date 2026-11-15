@@ -20,6 +20,12 @@ Order: `convert_rgbt.py`, `convert_antiuav.py`, then `convert_fusion_images.py` 
 |---|---|
 | `make_4ch_weights.py` | copies a pretrained 3-channel YOLO model into one whose first layer takes 4 channels (R, G, B, IR) |
 
+## Share a run
+
+| Tool | Does |
+|---|---|
+| `save_run.py` | adds one row to `results/runs.csv` and copies the run's small record files; `--model` also copies the model into `models/` |
+
 ## Fix labels
 
 | Tool | Does |

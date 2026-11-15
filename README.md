@@ -9,6 +9,7 @@ RGB + IR drone detection on small hardware. This page explains the data, split a
 | `Metadata/` | tables about the data: sessions and clips (made by the team) |
 | `splits/` | which clip is train, val or test: one folder per split version |
 | `annotations/` | our fixes to the authors' labels: one folder per label version |
+| `results/`, `models/` | what we trained: one row per run, and the models that matter |
 | `tools/` | scripts to convert the data, fix labels, build lists and train |
 | `raspberry/` | tracker and stream simulator for the Raspberry Pi |
 
@@ -60,4 +61,4 @@ Fusion needs the 4-channel copy, made by `make_4ch_weights.py`; `train.py` stops
 - `build_lists.py` stops if a group or recording is in two splits (`tools/check_split.py` does the same check), or if a picture has no label file.
 - Each run folder gets `run_info.yaml` and `split_info.yaml`, with the settings, versions and hashes.
 
-More details: `splits/README.md`, `annotations/README.md`, `tools/README.md`.
+More details: `splits/README.md`, `annotations/README.md`, `results/README.md`, `tools/README.md`.
