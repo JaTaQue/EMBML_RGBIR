@@ -10,9 +10,11 @@ The data is RGBT-Tiny (`dataset = rgbt`) and Anti-UAV (`dataset = auav`), in the
 
 ## Status
 
-This page describes the **target design**. The two files now in this folder (`clips_rgbt_tiny.csv`, `sessions.csv`) are a first
-version, with hand-typed counts that do not all match. They will be replaced by tables made by a script
-(`tools/make_metadata.py`, not written yet). Not done yet: the script, the box table, the Anti-UAV rows, `scene_type`.
+`sessions.csv` was rebuilt on 2026-11-15 from a visual review of the sessions (film strips) and covers **both datasets**: 39 RGBT-Tiny
+sessions (`S###`) and 37 Anti-UAV sessions (`A###`, one per recording). In `clips_rgbt_tiny.csv` only the `session` column was updated to the
+new session IDs; its other columns are still Tanishq's first version, and the Anti-UAV videos are not in it yet. Session IDs were renumbered,
+so the IDs in `splits/v3/assignment.csv` (a finished version) are the **old** ones. Not done yet: the script (`tools/make_metadata.py`),
+the box table, the class counts and drone columns of `clips.csv`.
 
 ## Levels and links
 
@@ -27,12 +29,15 @@ Each fact is stored once, at the level where it is true. A box finds its session
 
 | Column | Who fills it | Meaning |
 |---|---|---|
-| `session` (key), `dataset` | script | group ID, for example `S023` (rgbt) or `A004` (auav) |
-| `recordings`, `n_clips`, `n_frames` | script | counted from `clips.csv` |
+| `session` (key), `dataset` | script | group ID, `S###` for `rgbt`, `A###` for `auav` |
+| `recordings`, `n_clips`, `n_frames` | script | counted from the clips (for auav: the recording, the videos, the kept frames) |
 | `official_split` | script | `train`, `test` or `both` (both = the authors put clips of this place on both sides). `NA` for auav |
-| `light` | script | `day`, `night` or `mixed` |
-| `n_drone_boxes` | script | drone boxes in the group |
-| `scene_type`, `background`, `confidence`, `note` | **by hand** | city, lake, sky, airfield ...; a few words; `sure` or `unsure` about the grouping; free text |
+| `light` | script, checked by eye | `day`, `night`, `dusk` or `mixed` (the clips differ). Rule on the clips, see `clips.csv`. Checked blind on 103 clips and videos, 0 day/night contradictions |
+| `scene_type` | **by hand** | one of `city street`, `junction`, `city area`, `plaza`, `sports field`, `highway`, `waterside`, `sea`, `open land`, `sky only` |
+| `background` | **by hand** | what is behind the objects. One or more of `sky`, `buildings`, `vegetation`, `water`, `ground`, `mountains`, joined with `+` (`sky+buildings`) |
+| `scene_check` | by hand | who checked `scene_type` and `background`: `corrected by Markkus`, `no correction by Markkus` and so on |
+| `n_drone_boxes` | script | drone boxes in the group (IR labels) |
+| `confidence`, `evidence`, `comment_visual_check` | by hand | how sure the grouping is (`sure` or `unsure`), what it is based on, and what was checked by eye |
 
 A session is a group of clips from the same place and time. We made the grouping ourselves, the authors give none.
 For Anti-UAV we start with one session per recording (the `date_time` part of the video name).
@@ -47,7 +52,7 @@ For Anti-UAV we start with one session per recording (the `date_time` part of th
 | `n_frames` | frames in the clip |
 | `n_ship` ... `n_plane` | boxes per class |
 | `drone_boxes`, `drone_size_median`, `drone_contrast_median` | how many drones, how big, how visible |
-| `brightness`, `light` | mean RGB brightness; `night` if it is below 60, else `day` |
+| `brightness`, `light` | `night` if the 25th percentile of the grey RGB picture is below 40, or below 60 while the mean is below 90; else `day` (the old rule, mean below 60, called lit night streets day) |
 | `align_err_px`, `tags` | only auav: error of the RGB-IR alignment, challenge tags |
 
 ## boxes: one row per annotation

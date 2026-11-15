@@ -1,43 +1,77 @@
-﻿session,n_clips,recordings,official_split,v3_split,has_drone,confidence,drone_type,background,scene_type,light,note
-S000,7,DJI_0022 DJI_0024 DJI_0026 DJI_0028,both,train,0,NA,NA,NA,NA,NA,
-S001,2,DJI_0032,both,train,0,NA,NA,NA,NA,NA,
-S002,1,DJI_0043,train,train,0,NA,NA,NA,NA,NA,
-S003,1,DJI_0047,train,train,0,NA,NA,NA,NA,NA,
-S004,3,DJI_0049 DJI_0051,both,train,1,NA,NA,NA,NA,NA,
-S005,1,DJI_0057,train,test,1,NA,NA,NA,NA,NA,
-S006,2,DJI_0061 DJI_0067,both,val,0,NA,NA,NA,NA,NA,
-S007,1,DJI_0069,train,train,0,NA,NA,NA,NA,NA,
-S008,1,DJI_0071,train,train,0,NA,NA,NA,NA,NA,
-S009,1,DJI_0075,both,train,0,NA,NA,NA,NA,NA,
-S010,2,DJI_0081 DJI_0083,train,train,0,NA,NA,NA,NA,NA,
-S011,3,DJI_0085 DJI_0089 DJI_0095,train,val,0,NA,NA,NA,NA,NA,
-S012,14,DJI_0101 DJI_0107 DJI_0109 DJI_0111 DJI_0113 DJI_0115 DJI_0117 DJI_0119 DJI_0121 DJI_0123 DJI_0125 DJI_0127 DJI_0129 DJI_0131,both,train,0,NA,NA,NA,NA,NA,
-S013,1,DJI_0133,train,train,0,NA,NA,NA,NA,NA,
-S014,4,DJI_0135 DJI_0137 DJI_0139 DJI_0141,both,train,0,NA,NA,NA,NA,NA,
-S015,4,DJI_0143 DJI_0145 DJI_0155 DJI_0157,both,test,1,NA,NA,NA,NA,NA,
-S016,2,DJI_0159 DJI_0163,both,val,1,NA,NA,NA,NA,NA,
-S017,3,DJI_0167 DJI_0169 DJI_0171,both,test,0,NA,NA,NA,NA,NA,
-S018,1,DJI_0173,test,val,1,NA,NA,NA,NA,NA,
-S019,1,DJI_0175,train,test,1,NA,NA,NA,NA,NA,
-S020,1,DJI_0177,train,val,1,NA,NA,NA,NA,NA,
-S021,5,DJI_0179 DJI_0181 DJI_0183 DJI_0227 DJI_0225,both,val,0,NA,NA,NA,NA,NA,
-S022,3,DJI_0217 DJI_0221 DJI_0243,both,train,1,NA,NA,NA,NA,NA,
-S023,6,DJI_0253 DJI_0255 DJI_0257,both,train,1,NA,NA,NA,NA,NA,
-S024,0,,train,test,0,NA,NA,NA,NA,NA,
-S025,5,DJI_0273 DJI_0277 DJI_0285,train,train,0,NA,NA,NA,NA,NA,
-S026,3,DJI_0275 DJI_0283 DJI_0265,train,train,0,NA,NA,NA,NA,NA,
-S027,0,,both,train,0,NA,NA,NA,NA,NA,
-S028,2,DJI_0279,both,val,0,NA,NA,NA,NA,NA,
-S029,8,DJI_0303 DJI_0305 DJI_0307 DJI_0309,both,train,0,NA,NA,NA,NA,NA,
-S030,4,DJI_0317 DJI_0319 DJI_0323 DJI_0325,both,test,0,NA,NA,NA,NA,NA,
-S031,1,DJI_0327,test,test,0,NA,NA,NA,NA,NA,
-S032,1,DJI_0331,train,train,0,NA,NA,NA,NA,NA,
-S033,3,DJI_0337 DJI_0341,both,train,0,NA,NA,NA,NA,NA,
-S034,2,DJI_0030,,,,,,,,,
-S035,1,DJI_0073,,,,,,,,,
-S036,1,DJI_0077,,,,,,,,,
-S037,3,DJI_0229 DJI_0237 DJI_0241,,,,,,,,,
-S038,4,DJI_0271 DJI_0293 DJI_0287,,,,,,,,,
-S039,2,DJI_0291  DJI_0295,,,,,,,,,
-S040,4,DJI_0339 DJI_0343 DJI_0345,,,,,,,,,
-S041,1,DJI_0351,,,,,,,,,
+session,dataset,recordings,n_clips,n_frames,official_split,light,scene_type,background,scene_check,n_drone_boxes,confidence,evidence,comment_visual_check
+S000,rgbt,DJI_0022 DJI_0024 DJI_0026 DJI_0028,7,2850,both,day,sea,water+sky+mountains,corrected by Markkus 2026-11-15,0,sure,checked by Markkus on the film strips,"checked by Markkus on the film strips, 2026-11-15: taken as one place (the sea bay), DJI_0030 was separated from them"
+S001,rgbt,DJI_0030,2,1180,both,day,sea,water+sky,no correction by Markkus 2026-11-15,0,sure,checked by Markkus on the film strips,"checked by Markkus on the film strips, 2026-11-15: a separate place from 0022 to 0028 (the sea bay)"
+S002,rgbt,DJI_0032,2,640,both,night,city street,buildings+ground,no correction by Markkus 2026-11-15,0,sure,"old and Tanishq groupings agree, not checked by eye",
+S003,rgbt,DJI_0043,1,380,train,day,sports field,ground,no correction by Markkus 2026-11-15,0,sure,"old and Tanishq groupings agree, not checked by eye",
+S004,rgbt,DJI_0047,1,310,train,night,city area,buildings+vegetation,no correction by Markkus 2026-11-15 (my guess was unsure),0,sure,"old and Tanishq groupings agree, not checked by eye",
+S005,rgbt,DJI_0049 DJI_0051,3,1270,both,night,plaza,ground+vegetation,corrected by Markkus 2026-11-15,1180,sure,"old and Tanishq groupings agree, not checked by eye",light checked by Markkus 2026-11-15: DJI_0049 and DJI_0051 are night
+S006,rgbt,DJI_0057,1,560,train,night,sports field,ground,no correction by Markkus 2026-11-15 (my guess was unsure),560,sure,"old and Tanishq groupings agree, not checked by eye",
+S007,rgbt,DJI_0061 DJI_0067,2,740,both,day,waterside,water+buildings,waterside confirmed by Markkus 2026-11-15,0,sure,"old and Tanishq groupings agree, not checked by eye",
+S008,rgbt,DJI_0069,1,420,train,day,waterside,water,waterside confirmed by Markkus 2026-11-15,0,sure,"old and Tanishq groupings agree, not checked by eye",
+S009,rgbt,DJI_0071,1,590,train,day,waterside,water+ground,waterside confirmed by Markkus 2026-11-15,0,sure,"old and Tanishq groupings agree, not checked by eye",
+S010,rgbt,DJI_0073,1,360,test,night,city street,buildings+ground,no correction by Markkus 2026-11-15,0,sure,checked by Markkus on the film strips,"checked by Markkus on the film strips, 2026-11-15: different street from 0075 and 0077, each of the three is its own place"
+S011,rgbt,DJI_0075,1,240,train,night,junction,buildings+ground,no correction by Markkus 2026-11-15,0,sure,checked by Markkus on the film strips,"checked by Markkus on the film strips, 2026-11-15: different street from 0073 and 0077, each of the three is its own place"
+S012,rgbt,DJI_0077,1,360,train,night,city street,buildings+ground,no correction by Markkus 2026-11-15,0,sure,checked by Markkus on the film strips,"checked by Markkus on the film strips, 2026-11-15: different street from 0073 and 0075, each of the three is its own place"
+S013,rgbt,DJI_0081 DJI_0083,2,910,train,day,waterside,water+ground,waterside confirmed by Markkus 2026-11-15,0,sure,"old and Tanishq groupings agree, not checked by eye",
+S014,rgbt,DJI_0085 DJI_0089 DJI_0095,3,900,train,day,city street,vegetation+ground,no correction by Markkus 2026-11-15,0,sure,"old and Tanishq groupings agree, not checked by eye",
+S015,rgbt,DJI_0101 DJI_0107 DJI_0109 DJI_0111 DJI_0113 DJI_0115 DJI_0117 DJI_0119 DJI_0121 DJI_0123 DJI_0125 DJI_0127 DJI_0129 DJI_0131,14,4240,both,day,open land,sky+vegetation,no correction by Markkus 2026-11-15,0,sure,"old and Tanishq groupings agree, not checked by eye",
+S016,rgbt,DJI_0133,1,130,train,day,waterside,water+buildings,waterside confirmed by Markkus 2026-11-15,0,sure,"old and Tanishq groupings agree, not checked by eye",
+S017,rgbt,DJI_0135 DJI_0137 DJI_0139 DJI_0141,4,1360,both,day,city area,buildings+vegetation,no correction by Markkus 2026-11-15,0,sure,"old and Tanishq groupings agree, not checked by eye",
+S018,rgbt,DJI_0143 DJI_0145 DJI_0155 DJI_0157,4,1590,both,day,waterside,water+vegetation,waterside confirmed by Markkus 2026-11-15,1566,sure,"old and Tanishq groupings agree, not checked by eye",light checked by Markkus 2026-11-15: DJI_0157 is day
+S019,rgbt,DJI_0159 DJI_0163,2,720,both,day,sky only,sky,no correction by Markkus 2026-11-15,250,sure,"old and Tanishq groupings agree, not checked by eye",
+S020,rgbt,DJI_0167 DJI_0169 DJI_0171 DJI_0179 DJI_0181 DJI_0183 DJI_0225 DJI_0227,8,2969,both,mixed,city street,ground+vegetation,no correction by Markkus 2026-11-15,0,sure,checked by Markkus on the film strips (0167 and 0169 inferred from 0171),"checked by Markkus on the film strips, 2026-11-15: 0171 (day) and 0181 (night) are the same road, 0179 to 0227 are the same street seen from different angles, 0167 and 0169 are inferred from 0171, not looked at one by one | light checked by Markkus 2026-11-15: DJI_0171 is day, DJI_0181 is night, so this session is mixed"
+S021,rgbt,DJI_0173,1,450,test,dusk,sky only,sky,corrected by Markkus 2026-11-15,450,sure,"old and Tanishq groupings agree, not checked by eye","light blind check, Markkus 2026-11-15: DJI_0173 is dusk (the rule had said night)"
+S022,rgbt,DJI_0175,1,450,train,night,waterside,water+vegetation,waterside confirmed by Markkus 2026-11-15,450,sure,"old and Tanishq groupings agree, not checked by eye",
+S023,rgbt,DJI_0177,1,360,train,dusk,sky only,sky,no correction by Markkus 2026-11-15,360,sure,"old and Tanishq groupings agree, not checked by eye","light blind check, Markkus 2026-11-15: DJI_0177 is dusk (the rule had said day)"
+S024,rgbt,DJI_0217 DJI_0221 DJI_0243,3,1310,both,night,waterside,water+vegetation,waterside confirmed by Markkus 2026-11-15,1368,sure,checked by Markkus on the film strips,"checked by Markkus on the film strips, 2026-11-15: harbour place A, a different place from 0229, 0237, 0241 (harbour place B). Used Tanishq's split"
+S025,rgbt,DJI_0229 DJI_0237 DJI_0241,3,1400,both,night,waterside,water+vegetation,waterside confirmed by Markkus 2026-11-15,1385,sure,checked by Markkus on the film strips,"checked by Markkus on the film strips, 2026-11-15: harbour place B, a different place from 0217, 0221, 0243 (harbour place A). Used Tanishq's split"
+S026,rgbt,DJI_0253 DJI_0255 DJI_0257,6,3640,both,day,sky only,sky+buildings,no correction by Markkus 2026-11-15,5579,sure,"old and Tanishq groupings agree, not checked by eye",
+S027,rgbt,DJI_0265 DJI_0275,2,529,train,day,highway,vegetation+ground,corrected by Markkus 2026-11-15,0,sure,checked by Markkus on the film strips,"checked by Markkus on the film strips, 2026-11-15: 0265 and 0275 are the same place as each other, separate from 0279"
+S028,rgbt,DJI_0271 DJI_0293,2,433,train,day,open land,vegetation+sky,corrected by Markkus 2026-11-15,0,sure,checked by Markkus on the film strips,"checked by Markkus on the film strips, 2026-11-15: 0271 and 0293 are the same place, the airfield"
+S029,rgbt,DJI_0273 DJI_0285 DJI_0287,5,2448,train,day,sky only,sky,no correction by Markkus 2026-11-15,0,sure,checked by Markkus on the film strips,"checked by Markkus on the film strips, 2026-11-15: all sky, the same place as each other, how it relates to the airfield (0271, 0293) is not known"
+S030,rgbt,DJI_0277,2,916,both,day,open land,vegetation+sky,no correction by Markkus 2026-11-15,0,sure,"old and Tanishq groupings agree, not checked by eye",
+S031,rgbt,DJI_0279,2,660,train,day,junction,ground+vegetation,no correction by Markkus 2026-11-15,0,sure,checked by Markkus on the film strips,"checked by Markkus on the film strips, 2026-11-15: a separate place from 0265 and 0275"
+S032,rgbt,DJI_0283 DJI_0291 DJI_0295,3,1153,both,day,highway,ground+vegetation,no correction by Markkus 2026-11-15,0,sure,checked by Markkus on the film strips,"checked by Markkus on the film strips, 2026-11-15: 0283, 0291 and 0295 are the same place as each other"
+S033,rgbt,DJI_0303 DJI_0305 DJI_0307 DJI_0309,8,3313,both,day,sky only,sky+vegetation,no correction by Markkus 2026-11-15,0,sure,"old and Tanishq groupings agree, not checked by eye",
+S034,rgbt,DJI_0317 DJI_0319 DJI_0323 DJI_0325,4,2386,both,night,waterside,water+buildings,waterside confirmed by Markkus 2026-11-15,0,sure,"old and Tanishq groupings agree, not checked by eye",
+S035,rgbt,DJI_0327,1,390,test,night,city area,buildings+ground,no correction by Markkus 2026-11-15,0,sure,"old and Tanishq groupings agree, not checked by eye",
+S036,rgbt,DJI_0331,1,360,train,night,junction,buildings+ground,no correction by Markkus 2026-11-15,0,sure,"old and Tanishq groupings agree, not checked by eye",
+S037,rgbt,DJI_0337 DJI_0339 DJI_0341 DJI_0343 DJI_0345,7,3584,both,night,waterside,water+buildings,waterside confirmed by Markkus 2026-11-15,0,sure,checked by Markkus on the film strips,"checked by Markkus on the film strips, 2026-11-15: all five show the same river | light checked by Markkus 2026-11-15: DJI_0337 is night (dusk with the city lights on)"
+S038,rgbt,DJI_0351,1,200,train,night,waterside,water,waterside confirmed by Markkus 2026-11-15,0,sure,"old and Tanishq groupings agree, not checked by eye",
+A000,auav,20190925_101846,5,490,NA,day,sky only,sky,no correction by Markkus 2026-11-15,469,sure,"recording = date_time in the video name, videos of one recording can look different",
+A001,auav,20190925_111757,4,335,NA,day,city area,sky+buildings,no correction by Markkus 2026-11-15,308,sure,"recording = date_time in the video name, videos of one recording can look different",
+A002,auav,20190925_124000,2,117,NA,day,city area,sky+buildings,no correction by Markkus 2026-11-15,117,sure,"recording = date_time in the video name, videos of one recording can look different",
+A003,auav,20190925_124612,5,493,NA,day,city area,sky+buildings,no correction by Markkus 2026-11-15,493,sure,"recording = date_time in the video name, videos of one recording can look different",
+A004,auav,20190925_130434,2,200,NA,day,sky only,sky,no correction by Markkus 2026-11-15,200,sure,"recording = date_time in the video name, videos of one recording can look different",
+A005,auav,20190925_131530,2,193,NA,day,city area,sky+buildings,no correction by Markkus 2026-11-15,193,sure,"recording = date_time in the video name, videos of one recording can look different",
+A006,auav,20190925_133630,5,500,NA,day,city area,sky+buildings,no correction by Markkus 2026-11-15,500,sure,"recording = date_time in the video name, videos of one recording can look different",
+A007,auav,20190925_134301,5,462,NA,day,city area,sky+buildings,no correction by Markkus 2026-11-15,462,sure,"recording = date_time in the video name, videos of one recording can look different",
+A008,auav,20190925_140917,4,341,NA,day,city area,sky+buildings,no correction by Markkus 2026-11-15,341,sure,"recording = date_time in the video name, videos of one recording can look different",
+A009,auav,20190925_141417,8,738,NA,day,city area,sky+buildings,no correction by Markkus 2026-11-15,738,sure,"recording = date_time in the video name, videos of one recording can look different",
+A010,auav,20190925_143900,2,200,NA,day,sky only,sky,no correction by Markkus 2026-11-15,200,sure,"recording = date_time in the video name, videos of one recording can look different",
+A011,auav,20190925_152412,1,61,NA,day,city area,sky+buildings,no correction by Markkus 2026-11-15,61,sure,"recording = date_time in the video name, videos of one recording can look different",
+A012,auav,20190925_183946,8,709,NA,mixed,sky only,sky,no correction by Markkus 2026-11-15,709,sure,"recording = date_time in the video name, videos of one recording can look different","light checked by Markkus 2026-11-15: videos _1_1, _1_2 and _1_3 are dusk (the rule had said night), the other five (_1_4 to _1_8) are night by the rule (mean brightness 30 down to 8, all tagged LI), so the recording goes from dusk to night"
+A013,auav,20190925_193610,9,842,NA,night,sky only,sky,no correction by Markkus 2026-11-15,822,sure,"recording = date_time in the video name, videos of one recording can look different",
+A014,auav,20190925_194211,8,754,NA,night,sky only,sky,no correction by Markkus 2026-11-15,712,sure,"recording = date_time in the video name, videos of one recording can look different",
+A015,auav,20190925_200320,8,647,NA,night,sky only,sky,no correction by Markkus 2026-11-15 (my guess was unsure),647,sure,"recording = date_time in the video name, videos of one recording can look different",
+A016,auav,20190925_200805,6,531,NA,night,city area,sky+buildings,no correction by Markkus 2026-11-15,525,sure,"recording = date_time in the video name, videos of one recording can look different",
+A017,auav,20190925_205804,4,338,NA,night,sky only,sky,no correction by Markkus 2026-11-15,330,sure,"recording = date_time in the video name, videos of one recording can look different",
+A018,auav,20190925_210802,7,647,NA,night,sky only,sky,no correction by Markkus 2026-11-15,644,sure,"recording = date_time in the video name, videos of one recording can look different",
+A019,auav,20190925_213001,5,446,NA,night,city area,sky+buildings,no correction by Markkus 2026-11-15 (my guess was unsure),439,sure,"recording = date_time in the video name, videos of one recording can look different",
+A020,auav,20190925_222534,4,391,NA,night,sky only,sky,no correction by Markkus 2026-11-15,391,sure,"recording = date_time in the video name, videos of one recording can look different",
+A021,auav,20190926_095902,3,277,NA,day,city area,sky+buildings,no correction by Markkus 2026-11-15,277,sure,"recording = date_time in the video name, videos of one recording can look different",
+A022,auav,20190926_102042,6,543,NA,mixed,city area,sky+buildings,no correction by Markkus 2026-11-15,535,sure,"recording = date_time in the video name, videos of one recording can look different","light blind check, Markkus 2026-11-15: video _1_1 is dusk (the rule had said day), the other 5 videos are day by the rule, so the recording is mixed"
+A023,auav,20190926_103046,3,251,NA,day,city area,sky+buildings,no correction by Markkus 2026-11-15,251,sure,"recording = date_time in the video name, videos of one recording can look different",
+A024,auav,20190926_111509,7,614,NA,day,city area,sky+buildings,no correction by Markkus 2026-11-15,614,sure,"recording = date_time in the video name, videos of one recording can look different",
+A025,auav,20190926_130341,8,703,NA,day,city area,sky+buildings,no correction by Markkus 2026-11-15,703,sure,"recording = date_time in the video name, videos of one recording can look different",
+A026,auav,20190926_133516,7,632,NA,day,city area,sky+buildings,no correction by Markkus 2026-11-15,632,sure,"recording = date_time in the video name, videos of one recording can look different",
+A027,auav,20190926_134054,6,556,NA,day,city area,sky+buildings,no correction by Markkus 2026-11-15,556,sure,"recording = date_time in the video name, videos of one recording can look different",
+A028,auav,20190926_141816,7,637,NA,day,city area,sky+buildings,no correction by Markkus 2026-11-15,637,sure,"recording = date_time in the video name, videos of one recording can look different",
+A029,auav,20190926_142435,8,730,NA,day,city area,sky+buildings,no correction by Markkus 2026-11-15,730,sure,"recording = date_time in the video name, videos of one recording can look different",
+A030,auav,20190926_143632,5,500,NA,day,city area,sky+buildings,no correction by Markkus 2026-11-15,499,sure,"recording = date_time in the video name, videos of one recording can look different",
+A031,auav,20190926_144550,9,818,NA,day,city area,sky+buildings,no correction by Markkus 2026-11-15,818,sure,"recording = date_time in the video name, videos of one recording can look different",
+A032,auav,20190926_183400,7,641,NA,mixed,sky only,sky,no correction by Markkus 2026-11-15,627,sure,"recording = date_time in the video name, videos of one recording can look different","light checked by Markkus 2026-11-15: video _1_2 is day (the authors' LI tag says low illumination, the rule and Markkus say day), the other videos are night by the rule, so the recording stays mixed | light blind check, Markkus 2026-11-15: video _1_3 is dusk (the rule had said night)"
+A033,auav,20190926_183941,5,417,NA,night,sky only,sky,no correction by Markkus 2026-11-15,417,sure,"recording = date_time in the video name, videos of one recording can look different",
+A034,auav,20190926_193515,1,92,NA,night,sky only,sky,no correction by Markkus 2026-11-15,92,sure,"recording = date_time in the video name, videos of one recording can look different",
+A035,auav,20190926_195921,1,100,NA,night,sky only,sky,no correction by Markkus 2026-11-15,100,sure,"recording = date_time in the video name, videos of one recording can look different",
+A036,auav,20190926_200510,5,450,NA,night,sky only,sky,no correction by Markkus 2026-11-15 (my guess was unsure),448,sure,"recording = date_time in the video name, videos of one recording can look different",
