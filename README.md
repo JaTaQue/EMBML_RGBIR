@@ -1,6 +1,6 @@
 # EMBML_RGBIR
 
-RGB + IR drone detection on small hardware. This page explains the data, split and training part of the repo.
+RGB + IR drone detection on small hardware. This page explains the data, split, training and results part of the repo.
 
 ## What is where
 
@@ -16,7 +16,7 @@ RGB + IR drone detection on small hardware. This page explains the data, split a
 The pictures and the authors' labels are **not** in git (research use only). Each person gets them from the
 authors. Only small text files are in git.
 
-## The idea in five lines
+## The idea in six lines
 
 1. The authors' labels (**annotations**) are converted once into YOLO **labels** (v0). They are never edited.
 2. Our corrections are a small file, `annotations/vN/fixes.csv`. v0 plus the fixes gives labels vN.
@@ -24,11 +24,14 @@ authors. Only small text files are in git.
    A group (clips of one place) is never cut, so the same place is not in train and test.
 4. A script turns the split and the label version into the lists that YOLO needs (`train.txt`, ...).
 5. Training takes only a data yaml, and every run saves a record of the split and labels it used.
+6. Runs that matter are added to a shared table, `results/runs.csv`, and the important models go to `models/`.
 
 ```
 authors' data -> convert -> labels v0 -> (+ fixes) -> labels vN
                                                           |
-assignment.csv ---------------------------> build_lists --+--> train.txt, val.txt, test.txt, data yaml -> train
+assignment.csv ---------------------------> build_lists --+--> train.txt, val.txt, test.txt, data yaml
+                                                                                  |
+                                                      results/runs.csv, models/ <-+-- train
 ```
 
 Pictures and labels sit side by side (`images/` and `labels/`), and YOLO finds a label by swapping `images`
@@ -48,6 +51,7 @@ python tools/make_4ch_weights.py --model weights/yolo26n.pt --out weights/yolo26
 python tools/build_lists.py v3 --images fusion --labels v1
 python tools/train.py --data-yaml $EMBML_DATA/rgbt-tiny/splits/v3/labels_v1/fusion/fusion.yaml \
     --model weights/yolo26n_4ch.pt --name fusion_v3_v1 imgsz=640 epochs=30
+python tools/save_run.py runs/fusion_v3_v1 --model --note "why this run, what it showed"   # share it
 ```
 
 `--images` is `rgb`, `ir` or `fusion`. `--datasets rgbt` leaves Anti-UAV out of the lists.
@@ -60,5 +64,19 @@ Fusion needs the 4-channel copy, made by `make_4ch_weights.py`; `train.py` stops
 - Compare models only when they used the same split version and the same label version.
 - `build_lists.py` stops if a group or recording is in two splits (`tools/check_split.py` does the same check), or if a picture has no label file.
 - Each run folder gets `run_info.yaml` and `split_info.yaml`, with the settings, versions and hashes.
+- A row in `results/runs.csv` is never edited and a model in `models/` is never replaced. A correction is a new run.
+
+## Results so far
+
+Two baselines on the official RGBT-Tiny split (val = test, so these are test numbers; last epoch, 30 epochs, trained on the HPC):
+
+| Run | Images | mAP50 | mAP50-95 |
+|---|---|---|---|
+| `rgb_all_n640_e30_official_s0` | RGB | 0.371 | 0.161 |
+| `fusion_n640_e30_official_s0` | RGB + IR | 0.423 | 0.193 |
+
+These are overall numbers for all 7 classes. The official split leaks places between train and test (by our session grouping, 93% of the
+test frames are in places that also hold train clips), so they are a reference and not a measure of how well drones are found in new places.
+The full table is `results/runs.csv`.
 
 More details: `splits/README.md`, `annotations/README.md`, `results/README.md`, `tools/README.md`.
