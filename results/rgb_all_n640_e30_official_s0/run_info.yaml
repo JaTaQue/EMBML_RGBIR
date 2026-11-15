@@ -1,0 +1,10 @@
+name: rgb_all_n640_e30_official_s0
+reconstructed: yes   # made on the HPC with hpc/train.sbatch before tools/train.py existed; written afterwards from args.yaml and logs/jobs.tsv
+data_yaml: rgb_official
+model: weights/yolo26n.pt
+settings: {'imgsz': 640, 'epochs': 30, 'batch': 16, 'seed': 0, 'deterministic': True, 'patience': 0, 'save_period': 5, 'hsv_h': 0, 'hsv_s': 0, 'hsv_v': 0}
+command: sbatch hpc/train.sbatch rgb_official rgb_all_n640_e30_official_s0 imgsz=640 epochs=30 batch=16 seed=0 deterministic=True patience=0 save_period=5 hsv_h=0 hsv_s=0 hsv_v=0
+code_commit: unknown
+host: TalTech HPC
+slurm_job: 1099884
+started: 2026-11-11

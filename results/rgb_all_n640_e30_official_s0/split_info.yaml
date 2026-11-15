@@ -1,0 +1,16 @@
+reconstructed: yes   # written afterwards, see run_info.yaml
+split: official
+split_note: RGBT-Tiny train and test exactly as shipped by the authors; there is no val split, so val = test (use last.pt, patience 0)
+images: rgb
+labels: v0
+labels_note: the old folders yolo/labels and fusion/labels, which are identical to labels v0 (compared file by file)
+source_sha256: unknown
+fixes_sha256: none (authors labels)
+datasets: rgbt
+assignment_sha256: not applicable (the official split is not a splits/ version)
+code_commit: unknown
+built: 2026-11-11
+frames:
+  train: 34111
+  val: 12590
+  test: 12590

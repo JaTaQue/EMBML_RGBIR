@@ -1,0 +1,3 @@
+run,date,split,labels,images,datasets,model,epochs,batch,imgsz,precision,recall,mAP50,mAP50-95,metrics_on,model_file,note
+rgb_all_n640_e30_official_s0,2026-11-11,official,v0,rgb,rgbt,yolo26n.pt,30,16,640,0.6037,0.3815,0.3706,0.1610,val,models/rgb_all_n640_e30_official_s0_last.pt,"baseline on the official split (val = test, so these are test numbers); RGB only; records written afterwards, see split_info.yaml"
+fusion_n640_e30_official_s0,2026-11-11,official,v0,fusion,rgbt,yolo26n_4ch.pt,30,16,640,0.6112,0.4277,0.4225,0.1934,val,models/fusion_n640_e30_official_s0_last.pt,"baseline on the official split (val = test, so these are test numbers); RGB+IR fusion; records written afterwards, see split_info.yaml"

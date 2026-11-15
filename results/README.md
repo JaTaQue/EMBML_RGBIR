@@ -27,3 +27,10 @@ Then commit `results/` (and `models/`) on a branch and open a pull request.
 - `precision`, `recall`, `mAP50` and `mAP50-95` are the Ultralytics numbers on the **val** set of the split, from the last
   epoch. They are overall numbers for all classes. Drone-only numbers are not in this table yet.
 - Debug and tiny test runs are not saved here.
+
+## The two official-split baselines
+
+`rgb_all_n640_e30_official_s0` and `fusion_n640_e30_official_s0` were trained on the HPC on 2026-11-11, before `train.py`
+existed. Their `run_info.yaml` and `split_info.yaml` were written afterwards from `args.yaml` and the job log, and say
+`reconstructed: yes`. Hashes and the code commit are unknown. Split `official` means the authors' train and test, with val = test,
+so their metrics are test numbers. It is not a version in `splits/` (one clip cannot be both val and test in `assignment.csv`).
