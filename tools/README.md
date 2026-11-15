@@ -14,6 +14,12 @@ Run from the repo root. Set the data folder once per computer: `export EMBML_DAT
 Order: `convert_rgbt.py`, `convert_antiuav.py`, then `convert_fusion_images.py` for each dataset
 (only needed for fusion).
 
+## Model for fusion
+
+| Tool | Does |
+|---|---|
+| `make_4ch_weights.py` | copies a pretrained 3-channel YOLO model into one whose first layer takes 4 channels (R, G, B, IR) |
+
 ## Fix labels
 
 | Tool | Does |

@@ -43,12 +43,15 @@ python tools/convert_rgbt.py                  # authors' labels -> YOLO labels v
 python tools/convert_antiuav.py               # Anti-UAV videos -> frames and labels
 python tools/convert_fusion_images.py         # 4-channel PNGs (R, G, B, IR); --dataset auav for Anti-UAV
 python tools/apply_fixes.py v1                # labels v1 = v0 + annotations/v1/fixes.csv
+python tools/make_4ch_weights.py --model weights/yolo26n.pt --out weights/yolo26n_4ch.pt   # fusion only
 python tools/build_lists.py v3 --images fusion --labels v1
 python tools/train.py --data-yaml $EMBML_DATA/rgbt-tiny/splits/v3/labels_v1/fusion/fusion.yaml \
     --model weights/yolo26n_4ch.pt --name fusion_v3_v1 imgsz=640 epochs=30
 ```
 
 `--images` is `rgb`, `ir` or `fusion`. `--datasets rgbt` leaves Anti-UAV out of the lists.
+Get `yolo26n.pt` first (Ultralytics downloads it the first time you load it by name) and put it in `weights/`.
+Fusion needs the 4-channel copy, made by `make_4ch_weights.py`; `train.py` stops if the model and the data differ in channels.
 
 ## Rules
 
