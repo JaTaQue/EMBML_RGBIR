@@ -11,9 +11,12 @@ labels of <version> next to them:
 The authors' labels are never edited. v0 is read only. With an empty fixes file the result is
 identical to v0.
 
-fixes.csv has one row per change:  box_id,action,new_value,reason,reviewer,date
+fixes.csv has one row per change:  box_id,action,old_box,new_value,reason,reviewer,date
   box_id    rgbt/<clip>/<frame>/<rgb|ir>/<n>, n = line number (from 0) in the v0 label file of that
             frame and modality. For `add` use n = new1, new2, ... (any text starting with "new").
+  old_box   the box as it is in v0, a copy of its label line (e.g. 5 0.696875 0.818359 0.034375 0.019531).
+            Required for every action except `add`. The script stops if it is not the box in v0, so a
+            fix can never change a different box than the one that was reviewed.
   action    ok       reviewed, no change (kept so a review leaves a trace)
             remove   delete the box
             relabel  new_value = class name (ship car cyclist pedestrian bus drone plane)
@@ -40,7 +43,7 @@ from convert_rgbt import NAMES, link, yolo_line
 ROOT = Path(__file__).resolve().parents[1]
 CLASS_ID = {name: i for i, name in NAMES.items()}
 ACTIONS = {"ok", "remove", "relabel", "resize", "add"}
-COLUMNS = ["box_id", "action", "new_value", "reason", "reviewer", "date"]
+COLUMNS = ["box_id", "action", "old_box", "new_value", "reason", "reviewer", "date"]
 W, H = 640, 512  # all RGBT-Tiny frames
 
 
@@ -93,7 +96,7 @@ def load_fixes(path):
             except ValueError as e:
                 problems.append(f"{where}: {e}")
                 continue
-            out.setdefault((parts[1], parts[2], parts[3]), {})[parts[4]] = (row["action"], row["new_value"])
+            out.setdefault((parts[1], parts[2], parts[3]), {})[parts[4]] = (row["action"], row["new_value"], row["old_box"])
     return out, problems
 
 
@@ -101,7 +104,10 @@ def apply_to_lines(lines, fixes, key, problems):
     """The label lines of one frame after the fixes. Counts go in `done`."""
     done, adds, result = Counter(), [], []
     for n, line in enumerate(lines):
-        action, value = fixes.get(str(n), ("keep", ""))
+        action, value, old = fixes.get(str(n), ("keep", "", ""))
+        if action != "keep" and old.strip() != line.strip():
+            problems.append(f"{'/'.join(key)}/{n}: old_box does not match v0 (v0 has: {line})")
+            continue
         done[action] += 1
         if action == "remove":
             continue
@@ -113,7 +119,7 @@ def apply_to_lines(lines, fixes, key, problems):
                 problems.append(f"{'/'.join(key)}/{n}: the new box is outside the image")
                 continue
         result.append(line)
-    for n, (action, value) in fixes.items():
+    for n, (action, value, old) in fixes.items():
         if n.startswith("new"):
             cls, *box = value.split()
             line = yolo_line(CLASS_ID[cls], parse_box(" ".join(box)), W, H)
@@ -184,8 +190,9 @@ def main():
         raise SystemExit("problems while applying:\n  " + "\n  ".join(problems))
 
     summary = {k: v for k, v in done.items() if k != "keep"}
+    source = read_info(tiny / "yolo_v0" / "labels_info.txt").get("source_sha256", "unknown")
     text = "\n".join([f"labels version {a.version}", "parent: v0 (the authors' labels, RGBT-Tiny)",
-                      f"fixes_sha256: {sha}", f"fixes_rows: {sum(len(v) for v in fixes.values())}",
+                      f"source_sha256: {source}", f"fixes_sha256: {sha}", f"fixes_rows: {sum(len(v) for v in fixes.values())}",
                       f"applied: {summary or 'none'}", f"code_commit: {git('rev-parse', 'HEAD')}"])
     for root in (new_yolo, new_fusion):
         (root / "labels_info.txt").write_text(text + "\n")

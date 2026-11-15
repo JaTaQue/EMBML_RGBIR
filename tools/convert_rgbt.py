@@ -21,16 +21,20 @@ A label line is `class cx cy w h`, centre and size scaled 0 to 1 by the image si
 to the image; a box with no area left is dropped; boxes the authors marked `ignore` or `iscrowd` are
 skipped. A frame with no objects gets an empty file (a background image).
 
-The summary and the box counts per class are printed, and written to labels_info.txt in each root.
+The summary and the box counts per class are printed, and written to labels_info.txt in each root, with a hash of
+the authors' files. If annotations/authors_files.sha256 exists, the hash must match it, so everybody builds v0 from the same files.
 """
 
 import argparse
+import hashlib
 import json
 import os
 from collections import Counter
 from pathlib import Path
 
 from common import data_dir
+
+ROOT = Path(__file__).resolve().parents[1]
 
 NAMES = {0: "ship", 1: "car", 2: "cyclist", 3: "pedestrian", 4: "bus", 5: "drone", 6: "plane"}
 MODS = {"00": "rgb", "01": "ir"}
@@ -92,6 +96,15 @@ def write_labels(frames, root, flat):
     return boxes, dropped, empty
 
 
+def source_hash(raw):
+    """One hash over the four COCO files of the authors, so we can tell that two copies are the same."""
+    h = hashlib.sha256()
+    for mod in MODS:
+        for split in ("train", "test"):
+            h.update((raw / "annotations_coco" / f"instances_{mod}_{split}2017.json").read_bytes())
+    return h.hexdigest()
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--version", default="v0", help="label version (default v0, the authors' labels)")
@@ -99,6 +112,12 @@ def main():
     a = p.parse_args()
     tiny = data_dir(a.data) / "rgbt-tiny"
     raw = tiny / "raw"
+    sha = source_hash(raw)
+    recorded = ROOT / "annotations" / "authors_files.sha256"
+    if recorded.exists() and recorded.read_text().split()[0] != sha:
+        raise SystemExit(f"the authors' COCO files on this computer differ from the ones the team used\n"
+                         f"  here:   {sha}\n  team:   {recorded.read_text().split()[0]} (annotations/authors_files.sha256)\n"
+                         "Labels built from different files are not the same version. Ask the others which download they have.")
     yolo, fusion = tiny / f"yolo_{a.version}", tiny / f"fusion_{a.version}"
     for root in (yolo, fusion):
         root.mkdir(parents=True, exist_ok=True)
@@ -116,11 +135,15 @@ def main():
             ir_frames = frames
     # fusion labels are the IR labels, with the clip/<frame> layout of the 4-channel PNGs
     write_labels(ir_frames, fusion, flat=True)
-    text = "\n".join([f"labels version {a.version}", "source: RGBT-Tiny COCO json, official train and test pooled"] + report)
+    text = "\n".join([f"labels version {a.version}", "source: RGBT-Tiny COCO json, official train and test pooled",
+                      f"source_sha256: {sha}"] + report)
     for root in (yolo, fusion):
         (root / "labels_info.txt").write_text(text + "\n")
     print(text)
     print(f"-> {yolo}\n-> {fusion}")
+    if not recorded.exists():
+        print(f"note: no hash recorded in the repo yet; to make these files the team reference, write the source_sha256 "
+              f"above into {recorded}")
 
 
 if __name__ == "__main__":

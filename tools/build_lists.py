@@ -105,9 +105,13 @@ def build(version, data, images, datasets=None, labels="v0"):
     sha = hashlib.sha256((ROOT / "splits" / version / "assignment.csv").read_bytes()).hexdigest()
     dirty = "yes" if git("status", "--porcelain", "splits", "tools") not in ("", "unknown") else "no"
     label_info = tiny / f"{'yolo' if images != 'fusion' else 'fusion'}_{labels}" / "labels_info.txt"
-    fixes_sha = next((l.split(":", 1)[1].strip() for l in label_info.read_text().splitlines()
-                      if l.startswith("fixes_sha256")), "none (authors' labels)") if label_info.exists() else "unknown"
-    info = [f"split: {version}", f"images: {images}", f"labels: {labels}", f"fixes_sha256: {fixes_sha}",
+    def label_value(key, default):
+        if not label_info.exists():
+            return "unknown"
+        return next((l.split(":", 1)[1].strip() for l in label_info.read_text().splitlines() if l.startswith(key)), default)
+    info = [f"split: {version}", f"images: {images}", f"labels: {labels}",
+            f"source_sha256: {label_value('source_sha256', 'unknown')}",
+            f"fixes_sha256: {label_value('fixes_sha256', 'none (authors labels)')}",
             f"datasets: {' '.join(datasets) if datasets else 'all in assignment.csv'}",
             f"assignment_sha256: {sha}", f"code_commit: {git('rev-parse', 'HEAD')}",
             f"uncommitted_changes_in_splits_or_tools: {dirty}",
