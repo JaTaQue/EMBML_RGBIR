@@ -11,10 +11,12 @@ The data is RGBT-Tiny (`dataset = rgbt`) and Anti-UAV (`dataset = auav`), in the
 ## Status
 
 `sessions.csv` was rebuilt on 2026-11-15 from a visual review of the sessions (film strips) and covers **both datasets**: 39 RGBT-Tiny
-sessions (`S###`) and 37 Anti-UAV sessions (`A###`, one per recording). In `clips_rgbt_tiny.csv` only the `session` column was updated to the
-new session IDs; its other columns are still Tanishq's first version, and the Anti-UAV videos are not in it yet. Session IDs were renumbered,
-so the IDs in `splits/v3/assignment.csv` (a finished version) are the **old** ones. Not done yet: the script (`tools/make_metadata.py`),
-`boxes_drone.csv`, and the drone, plane and other-box columns of `clips.csv`.
+sessions (`S###`) and 37 Anti-UAV sessions (`A###`, one per recording). Session IDs were renumbered, so the IDs in
+`splits/v3/assignment.csv` (a finished version) are the **old** ones.
+
+`clips.csv` is made by `tools/make_metadata.py` and covers the **115 RGBT-Tiny clips and the 192 kept Anti-UAV videos** (307 rows). Its
+counts match `sessions.csv` (the script stops otherwise). It replaces `clips_rgbt_tiny.csv` (Tanishq's first version), which is kept only until
+it is deleted. Not done yet: `boxes_drone.csv`.
 
 ## Levels and links
 
@@ -37,7 +39,7 @@ Each fact is stored once, at the level where it is true. A box finds its session
 | `background` | **by hand** | what is behind the objects. One or more of `sky`, `buildings`, `vegetation`, `water`, `ground`, `mountains`, joined with `+` (`sky+buildings`) |
 | `scene_check` | by hand | who checked `scene_type` and `background`: `corrected by Markkus`, `no correction by Markkus` and so on |
 | `n_drone_boxes` | script | drone boxes in the group (IR labels) |
-| `confidence`, `evidence`, `comment_visual_check` | by hand | how sure the grouping is (`sure` or `unsure`), what it is based on, and what was checked by eye |
+| `evidence`, `comment_visual_check` | by hand | what the grouping is based on, and what was checked by eye |
 
 A session is a group of clips from the same place and time. We made the grouping ourselves, the authors give none.
 For Anti-UAV we start with one session per recording (the `date_time` part of the video name).
@@ -48,12 +50,11 @@ For Anti-UAV we start with one session per recording (the `date_time` part of th
 |---|---|
 | `clip` (key), `dataset` | for example `DJI_0257_2` |
 | `recording`, `session` | the flight (`DJI_0257`) and the group. Clips of one recording are always in one session |
-| `official_split` | the authors' train or test (`NA` for auav) |
 | `n_frames` | frames in the clip |
-| `drone_boxes`, `drone_size_median`, `drone_contrast_median` | how many drones (IR labels), how big, how visible. The core columns: our focus is drones |
+| `drone_boxes_ir`, `drone_boxes_rgb`, `drone_size_median` | drone boxes in the IR labels and in the RGB labels, and the median size (sqrt(width x height), pixels) of the IR drone boxes. The two counts differ (13,148 IR against 11,582 RGB in total), and the RGB-only model trains on the RGB labels, the fusion model on the IR labels. The core columns: our focus is drones. Contrast is not in this table: it is per box (`boxes_drone.csv`), where it can be joined to hits and misses |
 | `n_plane`, `n_other_boxes` | planes (the object most like a drone, for hard-negative checks) and all other non-drone boxes together. No count per class: the label files hold those |
-| `brightness`, `light` | `night` if the 25th percentile of the grey RGB picture is below 40, or below 60 while the mean is below 90; else `day` (the old rule, mean below 60, called lit night streets day) |
-| `align_err_px`, `tags` | only auav: error of the RGB-IR alignment, challenge tags |
+| `brightness_p25`, `brightness_mean` | median over 12 RGB pictures spread over the clip of the 25th percentile and of the mean of the grey picture. There is no `light` column in `clips.csv`: day, night, dusk or mixed is set per session in `sessions.csv`. Rule used for it: `night` if `brightness_p25` is below 40, or below 60 while `brightness_mean` is below 90; else `day` (the old rule, mean below 60, called lit night streets day). Use these two numbers to find the dark clips of a `mixed` session |
+| `align_err_px` | only auav (`NA` for rgbt): median error in pixels of the RGB-IR alignment of the video (`videos.csv`) |
 
 ## boxes.csv: one row per drone annotation
 

@@ -39,6 +39,7 @@ Order: `convert_rgbt.py`, `convert_antiuav.py`, then `convert_fusion_images.py` 
 | `check_split.py` | checks `splits/<version>/assignment.csv` for leaks and writes `checks.txt` |
 | `build_lists.py` | checks the split, then writes the image lists, the data yaml and `split_info.yaml`. `--labels` picks the label version (default v0) |
 | `train.py` | trains YOLO on a data yaml, checks the channels, writes `run_info.yaml` |
+| `make_metadata.py` | builds `Metadata/clips.csv` (RGBT-Tiny clips and Anti-UAV videos) from the IR and RGB labels, the RGB pictures or videos (for brightness), `anti-uav/videos.csv` and `Metadata/sessions.csv`; stops if the counts do not match `sessions.csv` |
 
 `common.py` holds the shared helper for the data folder.
 
