@@ -14,13 +14,13 @@ The data is RGBT-Tiny (`dataset = rgbt`) and Anti-UAV (`dataset = auav`), in the
 sessions (`S###`) and 37 Anti-UAV sessions (`A###`, one per recording). In `clips_rgbt_tiny.csv` only the `session` column was updated to the
 new session IDs; its other columns are still Tanishq's first version, and the Anti-UAV videos are not in it yet. Session IDs were renumbered,
 so the IDs in `splits/v3/assignment.csv` (a finished version) are the **old** ones. Not done yet: the script (`tools/make_metadata.py`),
-the box table, the class counts and drone columns of `clips.csv`.
+`boxes_drone.csv`, and the drone, plane and other-box columns of `clips.csv`.
 
 ## Levels and links
 
 ```
-boxes.csv   -- clip    -->  clips.csv   -- session -->  sessions.csv
-(one row per box)           (one row per clip)         (one row per group of clips)
+boxes_drone.csv -- clip -->  clips.csv   -- session -->  sessions.csv
+(one row per drone box)      (one row per clip)         (one row per group of clips)
 ```
 
 Each fact is stored once, at the level where it is true. A box finds its session through its clip.
@@ -50,22 +50,21 @@ For Anti-UAV we start with one session per recording (the `date_time` part of th
 | `recording`, `session` | the flight (`DJI_0257`) and the group. Clips of one recording are always in one session |
 | `official_split` | the authors' train or test (`NA` for auav) |
 | `n_frames` | frames in the clip |
-| `n_ship` ... `n_plane` | boxes per class |
-| `drone_boxes`, `drone_size_median`, `drone_contrast_median` | how many drones, how big, how visible |
+| `drone_boxes`, `drone_size_median`, `drone_contrast_median` | how many drones (IR labels), how big, how visible. The core columns: our focus is drones |
+| `n_plane`, `n_other_boxes` | planes (the object most like a drone, for hard-negative checks) and all other non-drone boxes together. No count per class: the label files hold those |
 | `brightness`, `light` | `night` if the 25th percentile of the grey RGB picture is below 40, or below 60 while the mean is below 90; else `day` (the old rule, mean below 60, called lit night streets day) |
 | `align_err_px`, `tags` | only auav: error of the RGB-IR alignment, challenge tags |
 
-## boxes: one row per annotation
+## boxes.csv: one row per drone annotation
+
+Our focus is drones, so this is the box table that matters. It is small (about 25 000 RGBT-Tiny rows, plus the Anti-UAV drones) and goes in git.
 
 | Column | Meaning |
 |---|---|
-| `box_id` (key), `dataset`, `clip`, `frame`, `modality`, `class` | `box_id` is `rgbt/<clip>/<frame>/<rgb or ir>/<n>` |
+| `box_id` (key), `dataset`, `clip`, `frame`, `modality`, `class` | `box_id` is `rgbt/<clip>/<frame>/<rgb or ir>/<n>`. `class` is always `drone` here |
 | `track_id` | the same object over the frames (rgbt only) |
 | `size_px` | sqrt(width x height) of the box |
-| `ir_contrast`, `ir_clutter`, `rgb_contrast`, `offset_px` | how visible the drone is; distance between its RGB and IR box. Measured for drones only |
-
-There are two files. `boxes_drone.csv` (drones only: about 25 000 RGBT-Tiny rows, plus the Anti-UAV drones) is small and goes in git.
-The full `boxes.csv` (all classes, about 1.2 million RGBT-Tiny rows) is too big, so each person builds it locally.
+| `ir_contrast`, `ir_clutter`, `rgb_contrast`, `offset_px` | how visible the drone is; distance between its RGB and IR box |
 
 ## Rules
 
@@ -77,6 +76,6 @@ The full `boxes.csv` (all classes, about 1.2 million RGBT-Tiny rows) is too big,
 
 ## Checks
 
-- Every `clip` in a box row exists in `clips.csv`, and every `session` in `clips.csv` exists in `sessions.csv`.
+- Every `clip` in a `boxes_drone.csv` row exists in `clips.csv`, and every `session` in `clips.csv` exists in `sessions.csv`.
 - Every session has at least one clip. Counts in `sessions.csv` and `clips.csv` equal what the label files say.
 - No empty `light` or `n_frames`.
