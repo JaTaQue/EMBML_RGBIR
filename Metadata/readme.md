@@ -15,8 +15,8 @@ sessions (`S###`) and 37 Anti-UAV sessions (`A###`, one per recording). Session 
 `splits/v3/assignment.csv` (a finished version) are the **old** ones.
 
 `clips.csv` is made by `tools/make_metadata.py` and covers the **115 RGBT-Tiny clips and the 192 kept Anti-UAV videos** (307 rows). Its
-counts match `sessions.csv` (the script stops otherwise). It replaces `clips_rgbt_tiny.csv` (Tanishq's first version), which is kept only until
-it is deleted. Not done yet: `boxes_drone.csv`.
+counts match `sessions.csv` (the script stops otherwise). It replaces `clips_rgbt_tiny.csv` (Tanishq's first version, deleted; it is in the git
+history). Not done yet: `boxes_drone.csv`.
 
 ## Levels and links
 
