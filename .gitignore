@@ -3,3 +3,6 @@ __pycache__/
 weights/
 runs/
 .~lock.*#
+Metadata/clips.csv
+Metadata/boxes_drone.csv
+Metadata/info.yaml
