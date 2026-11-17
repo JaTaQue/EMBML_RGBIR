@@ -39,7 +39,9 @@ Order: `convert_rgbt.py`, `convert_antiuav.py`, then `convert_fusion_images.py` 
 | `check_split.py` | checks `splits/<version>/assignment.csv` for leaks and writes `checks.txt` |
 | `build_lists.py` | checks the split, then writes the image lists, the data yaml and `split_info.yaml`. `--labels` picks the label version (default v0) |
 | `train.py` | trains YOLO on a data yaml, checks the channels, writes `run_info.yaml` |
-| `make_metadata.py` | builds `Metadata/clips.csv` (RGBT-Tiny clips and Anti-UAV videos) from the IR and RGB labels, the RGB pictures or videos (for brightness), `anti-uav/videos.csv` and `Metadata/sessions.csv`; stops if the counts do not match `sessions.csv` |
+| `make_metadata.py` | builds `Metadata/clips.csv` (RGBT-Tiny clips and Anti-UAV videos) from the IR and RGB labels, the RGB pictures or videos (for brightness), `anti-uav/videos.csv` and `Metadata/sessions.csv`; writes the session counts into `sessions.csv`. `--labels vN` picks the RGBT-Tiny label version; `Metadata/info.yaml` records it |
+| `make_boxes_drone.py` | builds `Metadata/boxes_drone.csv`: every drone box of the labels of `--labels vN` (RGBT-Tiny, Anti-UAV kept frames) with its size, IR contrast and clutter or RGB contrast, the track ID and a review status. `box_id` keeps the v0 numbering of `fixes.csv` in every version. Stops if the counts do not match `clips.csv`. Run after `make_metadata.py` |
+| `build_all.py` | `build_all.py vN`: builds the labels of the version if missing, then `make_metadata.py` and `make_boxes_drone.py` for it, stopping at the first failure |
 
 `common.py` holds the shared helper for the data folder.
 
