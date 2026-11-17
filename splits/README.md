@@ -4,7 +4,7 @@ One folder per split version. A finished version is never changed; a new split i
 
 Each version has:
 
-- `assignment.csv`: one row per clip. Columns: `dataset` (rgbt or auav), `clip`, `group`, `split`. This is the only real content. Facts about a clip (frames, official split, classes) are in the metadata tables, not here.
+- `assignment.csv`: one row per clip. Columns: `dataset` (rgbt or auav), `clip`, `group`, `split`. This is the only real content. Facts about a clip (frames, drone counts, size, brightness, session) are in the metadata tables (`Metadata/`, built locally by `tools/build_all.py`), not here.
 - `config.yaml`: how the split was made (script, seed, rules).
 - `checks.txt`: frames, clips and boxes per split, and the checks (no group or recording in two splits).
 

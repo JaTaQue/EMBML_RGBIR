@@ -6,11 +6,11 @@ RGB + IR drone detection on small hardware. This page explains the data, split, 
 
 | Folder | What it holds |
 |---|---|
-| `Metadata/` | tables about the data: sessions and clips (made by the team) |
+| `Metadata/` | tables about the data: `sessions.csv` (our grouping, in git) and the tables built from the labels (`clips.csv`, `boxes_drone.csv`, local only) |
 | `splits/` | which clip is train, val or test: one folder per split version |
 | `annotations/` | our fixes to the authors' labels: one folder per label version |
 | `results/`, `models/` | what we trained: one row per run, and the models that matter |
-| `tools/` | scripts to convert the data, fix labels, build lists and train |
+| `tools/` | scripts to convert the data, fix labels, build the metadata tables and lists, and train |
 | `raspberry/` | tracker and stream simulator for the Raspberry Pi |
 
 The pictures and the authors' labels are **not** in git (research use only). Each person gets them from the
@@ -47,6 +47,7 @@ python tools/convert_rgbt.py                  # authors' labels -> YOLO labels v
 python tools/convert_antiuav.py               # Anti-UAV videos -> frames and labels
 python tools/convert_fusion_images.py         # 4-channel PNGs (R, G, B, IR); --dataset auav for Anti-UAV
 python tools/apply_fixes.py v1                # labels v1 = v0 + annotations/v1/fixes.csv
+python tools/build_all.py v1                  # labels (if missing) and the Metadata tables for v1: clips.csv, boxes_drone.csv
 python tools/make_4ch_weights.py --model weights/yolo26n.pt --out weights/yolo26n_4ch.pt   # fusion only
 python tools/build_lists.py v3 --images fusion --labels v1
 python tools/train.py --data-yaml $EMBML_DATA/rgbt-tiny/splits/v3/labels_v1/fusion/fusion.yaml \
@@ -58,9 +59,13 @@ python tools/save_run.py runs/fusion_v3_v1 --model --note "why this run, what it
 Get `yolo26n.pt` first (Ultralytics downloads it the first time you load it by name) and put it in `weights/`.
 Fusion needs the 4-channel copy, made by `make_4ch_weights.py`; `train.py` stops if the model and the data differ in channels.
 
+`build_all.py vN` builds the metadata tables of a label version (it needs the Anti-UAV conversion first). They are **not in git**: everyone builds
+them locally, and `Metadata/info.yaml` records which label version they came from. See `Metadata/readme.md`.
+
 ## Rules
 
 - A split version or a label version is never edited after use. A change makes a new version.
+- The tables in `Metadata/` that come from the labels are rebuilt with `tools/build_all.py` after a new label version, never edited by hand.
 - Compare models only when they used the same split version and the same label version.
 - `build_lists.py` stops if a group or recording is in two splits (`tools/check_split.py` does the same check), or if a picture has no label file.
 - Each run folder gets `run_info.yaml` and `split_info.yaml`, with the settings, versions and hashes.

@@ -37,8 +37,13 @@ boxes are supported; Anti-UAV labels are not versioned yet.
 python tools/convert_rgbt.py                    # once: the authors' labels as YOLO labels (v0)
 python tools/apply_fixes.py v1                  # v0 + annotations/v1/fixes.csv -> labels v1
 python tools/apply_fixes.py v1 --seal           # when the fixes are final: stores the hash of fixes.csv
+python tools/build_all.py v1                    # labels v1 if missing, then the Metadata tables built from them
 python tools/build_lists.py v3 --images fusion --labels v1
 ```
+
+`box_id` in `Metadata/boxes_drone.csv` always uses the **v0** line numbers that `fixes.csv` uses, in every label version, so a box found in the table
+can be fixed by copying its `box_id`. Boxes added by a fix are `new1`, `new2`, ... The table also has a `review` column made from `fixes.csv`
+(`not_reviewed`, `reviewed_ok`, `fixed`, `added`). After a new label version, run `build_all.py` again. See `Metadata/readme.md`.
 
 After `--seal`, the script stops if `fixes.csv` of that version has changed.
 Compare models only when they used the same split version and the same label version. Both are
